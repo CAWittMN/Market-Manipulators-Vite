@@ -17,7 +17,7 @@ class GameApi {
   static scale = scale;
   static markets = markets;
 
-  static Manipulate(
+  static manipulate(
     prevMonth,
     marketCard,
     manipulationCards,
@@ -54,28 +54,35 @@ class GameApi {
     return newMonth;
   }
 
-  // static getGames() {
-  //   let games = [];
-  //   try {
-  //     const fileList = fs.readdirSync(savedGamePath);
-  //     for (const file of fileList) {
-  //       games.push(JSON.parse(fs.readFileSync(`${savedGamePath}${file}`)));
-  //     }
-  //   } catch {
-  //     throw Error("Error loading games.");
-  //   }
-  //   return games;
-  // }
+  static getGames() {
+    let games = [];
+    try {
+      const fileList = fs.readdirSync(savedGamePath);
+      for (const file of fileList) {
+        games.push(JSON.parse(fs.readFileSync(`${savedGamePath}${file}`)));
+      }
+    } catch {
+      throw Error("Error loading games.");
+    }
+    return games;
+  }
+  static getGame(fileName) {
+    try {
+      const game = fs.readFileSync(savedGamePath + fileName + fileFormat);
+    } catch {
+      throw Error("Error loading game.");
+    }
+  }
 
-  // static saveGame(data) {
-  //   const jsonData = JSON.stringify(data);
-  //   try {
-  //     fs.writeFileSync(`${filePath}${data.createdAt}${fileFormat}`, jsonData);
-  //   } catch {
-  //     throw Error("Error saving game.");
-  //   }
-  //   console.log("Game saved.");
-  // }
+  static saveGame(data) {
+    const jsonData = JSON.stringify(data);
+    try {
+      fs.writeFileSync(`${filePath}${data.createdAt}${fileFormat}`, jsonData);
+    } catch {
+      throw Error("Error saving game.");
+    }
+    console.log("Game saved.");
+  }
 
   static newGame(options) {
     const newGame = {
@@ -92,10 +99,10 @@ class GameApi {
               loss: false,
               deltaMod: null,
               betaMod: null,
-              roll: 0,
             };
           }),
-          marketCard: [],
+          roll: null,
+          marketCard: null,
           manipulationCards: [],
           monthlyBonus: null,
           marketType: this.markets.something,
