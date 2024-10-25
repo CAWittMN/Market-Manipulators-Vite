@@ -4,10 +4,6 @@ import AppContext from "./context/AppContext";
 import GameApi from "./GameApi";
 import marketCards from "./components/game/marketCards/marketCardsIndex.js";
 
-import Router from "./router/Router.jsx";
-import MainMenuPage from "./components/mainMenu/MainMenuPage.jsx";
-import Navbar from "./components/navbar/Navbar.jsx";
-
 const INITIAL = {
   deltaMods: {},
   betaMods: {},
@@ -69,7 +65,6 @@ const MarketManipulators = () => {
         setManipulationData,
       }}
     >
-      <Navbar />
       <div>MarketManipulators</div>
       <Router />
       <button className="btn" onClick={handleQuit}>
