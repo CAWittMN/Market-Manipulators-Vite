@@ -1,8 +1,9 @@
 import config from "./config/config";
-import companies from "./gameInfo/companies/companies";
-import months from "./gameInfo/months/months";
-import scale from "./gameInfo/scale/scale";
-import markets from "./gameInfo/markets/markets";
+import companies from "./gameInfo/companies";
+import months from "./gameInfo/months";
+import scale from "./gameInfo/scale";
+import markets from "./gameInfo/markets";
+import phases from "./gameInfo/phases";
 
 import objectMap from "./helpers/objectMap";
 const fs = require("fs");
@@ -16,6 +17,7 @@ class GameApi {
   static months = months;
   static scale = scale;
   static markets = markets;
+  static phases = phases;
 
   static manipulate(
     prevMonth,

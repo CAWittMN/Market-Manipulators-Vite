@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "./context/AppContext";
 import GameApi from "./GameApi";
-import marketCards from "./components/game/marketCards/marketCardsIndex.js";
 import MenuModal from "./components/common/menuModal/MenuModal.jsx";
 import Router from "./router/Router.jsx";
 
@@ -21,7 +20,7 @@ const INITIAL = {
 const MarketManipulators = () => {
   const [currGame, setCurrGame] = useState(null);
   const [manipulationData, setManipulationData] = useState(INITIAL);
-  const [gameList, setGameList] = useState([]);
+  const [phaseIdx, setPhaseIdx] = useState(0);
   const [theme, setTheme] = useState("standard");
 
   const handleStartNewGame = (options) => {
@@ -32,11 +31,16 @@ const MarketManipulators = () => {
 
   const handleGetGames = () => {
     const games = GameApi.getGames();
-    setGameList(games);
+    return games;
   };
 
   const handleLoadGame = (fileName) => {
     const game = GameApi.getGame(fileName);
+    setCurrGame(game);
+  };
+
+  const handleUnloadGame = () => {
+    setCurrGame(null);
   };
 
   const handleManipulate = () => {
@@ -56,7 +60,7 @@ const MarketManipulators = () => {
   };
 
   const handleGetMarketCard = (cardNum) => {
-    marketCards[marketCardNum].component();
+    return marketCards[marketCardNum].component();
   };
 
   const handleQuit = () => GameApi.quitGame();
@@ -68,9 +72,11 @@ const MarketManipulators = () => {
         setCurrGame,
         manipulationData,
         setManipulationData,
+        phaseIdx,
+        setPhaseIdx,
       }}
     >
-      <div>MarketManipulators</div>
+      <MenuModal />
       <Router />
       <button className="btn" onClick={handleQuit}>
         Quit
