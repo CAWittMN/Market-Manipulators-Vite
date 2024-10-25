@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import AppContext from "./context/AppContext";
 import GameApi from "./GameApi";
 import marketCards from "./components/game/marketCards/marketCardsIndex.js";
+import MenuModal from "./components/common/menuModal/MenuModal.jsx";
+import Router from "./router/Router.jsx";
 
 const INITIAL = {
   deltaMods: {},
@@ -11,6 +13,9 @@ const INITIAL = {
   manipulationCards: [],
   roll: 0,
   monthlyBonus: null,
+  rollVoid: false,
+  betaAffectsDeltaMods: false,
+  specialRoll: null,
 };
 
 const MarketManipulators = () => {
