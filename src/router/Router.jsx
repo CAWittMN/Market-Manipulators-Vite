@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import GameRouter from "./routes/GameRouter";
-import AppContext from "../context/AppContext";
 
+import MainMenu from "../components/menus/MainMenu.jsx";
 
 const Router = () => {
-  const { currGame } = useContext(AppContext);
-
   return (
     <Routes>
-      <Route path="/" element={}
+      <Route path="/" element={<MainMenu />} />
+      <Route path="/game/" element={<GameRouter />} />
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 };

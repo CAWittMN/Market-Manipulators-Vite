@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import AppContext from "./context/AppContext";
 import GameApi from "./GameApi";
 import MenuModal from "./components/common/menuModal/MenuModal.jsx";
+import NewGameMenu from "./components/menus/NewGameMenu.jsx";
+import LoadGameMenu from "./components/menus/LoadGameMenu.jsx";
 import Router from "./router/Router.jsx";
 
 const INITIAL = {
@@ -23,10 +25,12 @@ const MarketManipulators = () => {
   const [phaseIdx, setPhaseIdx] = useState(0);
   const [theme, setTheme] = useState("standard");
 
+  const navigate = useNavigate();
+
   const handleStartNewGame = (options) => {
     const newGame = GameApi.newGame(options);
     setCurrGame(newGame);
-    return newGame;
+    navigate("/game");
   };
 
   const handleGetGames = () => {
@@ -37,6 +41,7 @@ const MarketManipulators = () => {
   const handleLoadGame = (fileName) => {
     const game = GameApi.getGame(fileName);
     setCurrGame(game);
+    navigate("/game");
   };
 
   const handleUnloadGame = () => {
@@ -49,7 +54,7 @@ const MarketManipulators = () => {
     const updatedGame = currGame.months.push(manipulatedMonth);
     setCurrGame({ ...updatedGame });
     setManipulationData(INITIAL);
-    GameApi.saveGame(updatedGame);
+    // GameApi.saveGame(updatedGame);
   };
 
   const handleUpdateManipulationData = (key, value) => {
@@ -68,12 +73,10 @@ const MarketManipulators = () => {
   return (
     <AppContext.Provider
       value={{
-        currGame,
-        setCurrGame,
         manipulationData,
         setManipulationData,
-        phaseIdx,
-        setPhaseIdx,
+        handleQuit,
+        handleStartNewGame,
       }}
     >
       <MenuModal />
