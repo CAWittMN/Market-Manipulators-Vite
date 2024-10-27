@@ -13,7 +13,7 @@ const MainMenu = () => {
   return (
     <div>
       <Header />
-      {currGam && <ContinueGameButton />}
+      {currGame && <ContinueGameButton />}
       <NewGameMenu />
       <LoadGameMenu />
       <button onClick={handleQuit}>Quit</button>
