@@ -1,7 +1,17 @@
 import React from "react";
+import { Input } from "@nextui-org/react";
 
-const Roll = () => {
-  return <div>Roll</div>;
+const Roll = ({ data, setData }) => {
+  const handleChange = (e) => {
+    const num = Number(e.target.value);
+    setData({ ...data, roll: num });
+  };
+  return (
+    <div>
+      Roll
+      <Input></Input>
+    </div>
+  );
 };
 
 export default Roll;

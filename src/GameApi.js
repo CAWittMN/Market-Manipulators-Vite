@@ -4,7 +4,6 @@ import months from "./gameInfo/months";
 import scale from "./gameInfo/scale";
 import markets from "./gameInfo/markets";
 import phases from "./gameInfo/phases";
-
 import objectMap from "./helpers/objectMap";
 const fs = require("fs");
 const { ipcRenderer } = require("electron");
@@ -19,15 +18,15 @@ class GameApi {
   static markets = markets;
   static phases = phases;
 
-  static manipulate(
-    prevMonth,
-    marketCard,
-    manipulationCards,
-    roll,
-    monthlyBonus,
-    betaMods = {},
-    deltaMods = {}
-  ) {
+  static manipulate(prevMonth, data) {
+    const {
+      marketCard,
+      manipulationCards,
+      roll,
+      monthlyBonus,
+      betaMods,
+      deltaMods,
+    } = data;
     const monthIdx =
       this.months.findIndex((month) => month == prevMonth.month) + 1;
 
@@ -81,7 +80,8 @@ class GameApi {
     try {
       fs.writeFileSync(`${filePath}${data.createdAt}${fileFormat}`, jsonData);
     } catch {
-      throw Error("Error saving game.");
+      // throw Error("Error saving game.");
+      console.log("Error saving game");
     }
     console.log("Game saved.");
   }
@@ -122,6 +122,17 @@ class GameApi {
     }
   }
   static getMarketType;
+  static makeTableData(game) {
+    let cols = [{ field: "company" }];
+    for (let i = 0; i < game.numMonths; i++) {
+      cols.push({ field: this.months[i] });
+    }
+    const companies = Object.keys(this.company);
+    let rowsTop = companies.map((name) => ({
+      company: this.companies[name].stockSymbol,
+    }));
+    let rowsBottom = [{ company: "Roll" }];
+  }
 
   static quitGame() {
     ipcRenderer.send("quit-game");

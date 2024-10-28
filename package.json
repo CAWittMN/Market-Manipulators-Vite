@@ -35,6 +35,7 @@
   "license": "MIT",
   "dependencies": {
     "@nextui-org/react": "^2.4.8",
+    "@vitejs/plugin-react": "^4.3.3",
     "ag-charts-react": "^10.3.0",
     "ag-grid-react": "^32.3.0",
     "electron-squirrel-startup": "^1.0.1",

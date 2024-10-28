@@ -12,14 +12,14 @@ import {
 } from "@nextui-org/react";
 
 const NewGameMenu = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [value, setValue] = useState({ numPlayers: 0, numMonths: 0 });
   const { handleStartNewGame } = useContext(AppContext);
 
   return (
     <>
       <Button onPress={onOpen}>New Game</Button>
-      <Modal isOpen={isOpen}>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>

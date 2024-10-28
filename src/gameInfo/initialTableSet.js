@@ -1,0 +1,1 @@
+const initialTableSet = { cols: [], rows: [] };

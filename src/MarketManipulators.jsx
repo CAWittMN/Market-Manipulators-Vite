@@ -2,22 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "./context/AppContext";
 import GameApi from "./GameApi";
-import MenuModal from "./components/common/menuModal/MenuModal.jsx";
+import Menu from "./components/common/menuModal/Menu.jsx";
 import NewGameMenu from "./components/menus/NewGameMenu.jsx";
 import LoadGameMenu from "./components/menus/LoadGameMenu.jsx";
 import Router from "./router/Router.jsx";
-
-const INITIAL = {
-  deltaMods: {},
-  betaMods: {},
-  marketCardNum: null,
-  manipulationCards: [],
-  roll: 0,
-  monthlyBonus: null,
-  rollVoid: false,
-  betaAffectsDeltaMods: false,
-  specialRoll: null,
-};
 
 const MarketManipulators = () => {
   const [currGame, setCurrGame] = useState(null);
@@ -30,7 +18,7 @@ const MarketManipulators = () => {
   const handleStartNewGame = (options) => {
     const newGame = GameApi.newGame(options);
     setCurrGame(newGame);
-    navigate("/game");
+    navigate("/game/market");
   };
 
   const handleGetGames = () => {
@@ -48,20 +36,13 @@ const MarketManipulators = () => {
     setCurrGame(null);
   };
 
-  const handleManipulate = () => {
+  const handleManipulate = (data) => {
     const prevMonth = currGame.months[currGame.months.length - 1];
-    const manipulatedMonth = GameApi.manipulate(prevMonth, manipulationData);
+    const manipulatedMonth = GameApi.manipulate(prevMonth, data);
     const updatedGame = currGame.months.push(manipulatedMonth);
     setCurrGame({ ...updatedGame });
-    setManipulationData(INITIAL);
-    // GameApi.saveGame(updatedGame);
-  };
-
-  const handleUpdateManipulationData = (key, value) => {
-    setManipulationData((manipulationData) => ({
-      ...manipulationData,
-      [key]: value,
-    }));
+    navigate("/game/newMonth");
+    GameApi.saveGame(updatedGame);
   };
 
   const handleGetMarketCard = (cardNum) => {
@@ -73,17 +54,14 @@ const MarketManipulators = () => {
   return (
     <AppContext.Provider
       value={{
-        manipulationData,
-        setManipulationData,
+        currGame,
+        handleManipulate,
         handleQuit,
         handleStartNewGame,
       }}
     >
-      <MenuModal />
+      <Menu />
       <Router />
-      <button className="btn" onClick={handleQuit}>
-        Quit
-      </button>
     </AppContext.Provider>
   );
 };
