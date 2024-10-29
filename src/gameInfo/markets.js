@@ -1,5 +1,5 @@
 const markets = {
-  toTheMoon: "Too the Moon!",
+  toTheMoon: "To the Moon!",
   bear: "Bear",
   something: "something",
   somethingElse: "Something Else",

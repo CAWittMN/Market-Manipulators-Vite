@@ -5,7 +5,7 @@ import scale from "./gameInfo/scale";
 import markets from "./gameInfo/markets";
 import phases from "./gameInfo/phases";
 import objectMap from "./helpers/objectMap";
-const fs = require("fs");
+// const fs = require("fs");
 const { ipcRenderer } = require("electron");
 
 const savedGamePath = config.fileConfig.savedGamesPath;
@@ -18,7 +18,7 @@ class GameApi {
   static markets = markets;
   static phases = phases;
 
-  static manipulate(prevMonth, data) {
+  static manipulate(data, currGame) {
     const {
       marketCard,
       manipulationCards,
@@ -27,64 +27,71 @@ class GameApi {
       betaMods,
       deltaMods,
     } = data;
+    const { companies } = currGame;
     const monthIdx =
       this.months.findIndex((month) => month == prevMonth.month) + 1;
 
     const newMonth = {
       month: this.months[monthIdx],
-      companies: objectMap(this.companies, (company, name) => {
-        const delta = scale[roll];
-        const beta = betaMods[name] ? betaMods[name] : company.beta;
-        const deltaMod = deltaMods[name] ? deltaMods[name] : 0;
-        const prevPrice = prevMonth.companies[name].price;
-        let newPrice = prevMonth * (delta * beta + deltaMod + 1);
-        return {
-          price: newPrice,
-          gain: prevPrice < newPrice,
-          loss: prevPrice > newPrice,
-          deltaMod: deltaMods[name] ? deltaMods[name] : null,
-          betaMod: betaMods[name] ? betaMods[name] : null,
-        };
-      }),
       marketCard: marketCard,
       manipulationCards: manipulationCards,
       monthlyBonus: monthlyBonus,
       roll: roll,
-      marketType: this.getMarketType(),
+      marketType: this.getMarketType(roll),
     };
-    return newMonth;
+
+    const newCompaniesData = companies.map((company) => {
+      const delta = scale[roll];
+      const beta = betaMods[company.manipulationId]
+        ? betaMods[company.manipulationId]
+        : company.beta;
+      const deltaMod = deltaMods[company.manipulationId]
+        ? deltaMods[manipulationId]
+        : 0;
+      const prevPrice = company.prices[company.prices.length - 1];
+      let newPrice = prevPrice * (delta * beta + deltaMod + 1);
+      company.deltaMods.push(deltaMod === 0 ? null : deltaMod);
+      company.betaMods.push(betaMods[company.manipulationId] ? beta : null);
+      company.prices.push(newPrice);
+      return company;
+    });
+
+    const newGameData = { ...currGame, companies: newCompaniesData };
+    newGameData.months.push(newMonth);
+
+    return newGameData;
   }
 
-  static getGames() {
-    let games = [];
-    try {
-      const fileList = fs.readdirSync(savedGamePath);
-      for (const file of fileList) {
-        games.push(JSON.parse(fs.readFileSync(`${savedGamePath}${file}`)));
-      }
-    } catch {
-      throw Error("Error loading games.");
-    }
-    return games;
-  }
-  static getGame(fileName) {
-    try {
-      const game = fs.readFileSync(savedGamePath + fileName + fileFormat);
-    } catch {
-      throw Error("Error loading game.");
-    }
-  }
+  // static getGames() {
+  //   let games = [];
+  //   try {
+  //     const fileList = fs.readdirSync(savedGamePath);
+  //     for (const file of fileList) {
+  //       games.push(JSON.parse(fs.readFileSync(`${savedGamePath}${file}`)));
+  //     }
+  //   } catch {
+  //     throw Error("Error loading games.");
+  //   }
+  //   return games;
+  // }
+  // static getGame(fileName) {
+  //   try {
+  //     const game = fs.readFileSync(savedGamePath + fileName + fileFormat);
+  //   } catch {
+  //     throw Error("Error loading game.");
+  //   }
+  // }
 
-  static saveGame(data) {
-    const jsonData = JSON.stringify(data);
-    try {
-      fs.writeFileSync(`${filePath}${data.createdAt}${fileFormat}`, jsonData);
-    } catch {
-      // throw Error("Error saving game.");
-      console.log("Error saving game");
-    }
-    console.log("Game saved.");
-  }
+  // static saveGame(data) {
+  //   const jsonData = JSON.stringify(data);
+  //   try {
+  //     fs.writeFileSync(`${filePath}${data.createdAt}${fileFormat}`, jsonData);
+  //   } catch {
+  //     // throw Error("Error saving game.");
+  //     console.log("Error saving game");
+  //   }
+  //   console.log("Game saved.");
+  // }
 
   static newGame(options) {
     const newGame = {
@@ -94,44 +101,40 @@ class GameApi {
       months: [
         {
           month: this.months[0],
-          companies: objectMap(this.companies, (company) => {
-            return {
-              price: company.price,
-              gain: false,
-              loss: false,
-              deltaMod: null,
-              betaMod: null,
-            };
-          }),
-          roll: null,
           marketCard: null,
-          manipulationCards: [],
+          manipulationsCards: null,
           monthlyBonus: null,
-          marketType: this.markets.something,
+          roll: null,
+          marketType: null,
         },
       ],
+      companies: this.companies.map((company, i) => ({
+        manipulationId: i + 1,
+        name: company.name,
+        prices: [company.price],
+        betaMods: [null],
+        deltaMods: [null],
+      })),
     };
-    this.saveGame(newGame);
+    // this.saveGame(newGame);
     return newGame;
   }
-  static getNumMonths(numPlayers) {
-    if (null) {
-      return;
-    } else if (null) {
-      return;
-    }
-  }
+
   static getMarketType;
-  static makeTableData(game) {
+  static makeTableData(gameData) {
     let cols = [{ field: "company" }];
-    for (let i = 0; i < game.numMonths; i++) {
-      cols.push({ field: this.months[i] });
+    for (i = 0; i < gameData.numMonths; i++) {
+      cols.push({ field: months[i] });
     }
-    const companies = Object.keys(this.company);
-    let rowsTop = companies.map((name) => ({
-      company: this.companies[name].stockSymbol,
-    }));
-    let rowsBottom = [{ company: "Roll" }];
+    let rows = [];
+    for (const company of gameData.companies) {
+      let row = { company: company.marketSym };
+      for (i = 0, i < gameData.numMonths; i++; ) {
+        row[this.months[i]] = company.prices[i];
+      }
+      rows.push(row);
+    }
+    return { cols: cols, rows: rows };
   }
 
   static quitGame() {

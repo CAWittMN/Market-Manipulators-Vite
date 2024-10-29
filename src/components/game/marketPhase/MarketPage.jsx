@@ -1,27 +1,26 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import AppContext from "../../../context/AppContext";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import GameApi from "../../../GameApi";
-
-const makeColData = (months) => {
-  let colums = [{ field: "company" }];
-  for (const month of months) {
-    colums.push({ field: month.month });
-  }
-  return columns;
-};
+import TablePage from "./table/TablePage";
 
 const MarketPage = () => {
-  const { currGame } = useContext(AppContext);
+  const { currGame, handleGetTableData } = useContext(AppContext);
   const [nav, setNav] = useState("table");
+  const { cols, rows } = handleGetTableData();
   const [rowData, setRowDatat] = useState();
+  const [colDefs, setColDefs] = useState();
 
   const makeRowData = () => {
     let rows = [];
   };
 
-  return <div>MarketPage</div>;
+  return (
+    <div>
+      <TablePage rows={rows} cols={cols} />
+    </div>
+  );
 };
 
 export default MarketPage;

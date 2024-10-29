@@ -36,6 +36,10 @@ const MarketManipulators = () => {
     setCurrGame(null);
   };
 
+  const handleGetTableData = () => {
+    return GameApi.makeTableData(currGame);
+  };
+
   const handleManipulate = (data) => {
     const prevMonth = currGame.months[currGame.months.length - 1];
     const manipulatedMonth = GameApi.manipulate(prevMonth, data);
