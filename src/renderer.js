@@ -27,6 +27,8 @@
  */
 
 import "./index.css";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 
 console.log(
   '👋 This message is being logged by "renderer.js", included via Vite'

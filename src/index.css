@@ -6,6 +6,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif;
   margin: auto;
-  max-width: 38rem;
   padding: 2rem;
+  background-color: slategray;
+}
+
+#mod-table .ag-root .ag-header {
+  display: none;
 }

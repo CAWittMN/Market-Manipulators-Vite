@@ -1,7 +1,7 @@
 import React from "react";
 
-const statsModal = () => {
+const StatsModal = () => {
   return <div>statsModal</div>;
 };
 
-export default statsModal;
+export default StatsModal;

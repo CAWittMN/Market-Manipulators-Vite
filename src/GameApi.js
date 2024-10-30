@@ -28,8 +28,7 @@ class GameApi {
       deltaMods,
     } = data;
     const { companies } = currGame;
-    const monthIdx =
-      this.months.findIndex((month) => month == prevMonth.month) + 1;
+    const monthIdx = currGame.months.length;
 
     const newMonth = {
       month: this.months[monthIdx],
@@ -37,7 +36,7 @@ class GameApi {
       manipulationCards: manipulationCards,
       monthlyBonus: monthlyBonus,
       roll: roll,
-      marketType: this.getMarketType(roll),
+      marketType: null,
     };
 
     const newCompaniesData = companies.map((company) => {
@@ -49,16 +48,16 @@ class GameApi {
         ? deltaMods[manipulationId]
         : 0;
       const prevPrice = company.prices[company.prices.length - 1];
-      let newPrice = prevPrice * (delta * beta + deltaMod + 1);
+      const trueDelta = delta * beta;
+      let newPrice = prevPrice * (trueDelta + deltaMod + 1);
       company.deltaMods.push(deltaMod === 0 ? null : deltaMod);
       company.betaMods.push(betaMods[company.manipulationId] ? beta : null);
-      company.prices.push(newPrice);
+      company.prices.push(Math.ceil(newPrice));
       return company;
     });
 
     const newGameData = { ...currGame, companies: newCompaniesData };
     newGameData.months.push(newMonth);
-
     return newGameData;
   }
 
@@ -111,6 +110,8 @@ class GameApi {
       companies: this.companies.map((company, i) => ({
         manipulationId: i + 1,
         name: company.name,
+        marketSym: company.stockSymbol,
+        beta: company.beta,
         prices: [company.price],
         betaMods: [null],
         deltaMods: [null],
@@ -122,19 +123,57 @@ class GameApi {
 
   static getMarketType;
   static makeTableData(gameData) {
-    let cols = [{ field: "company" }];
-    for (i = 0; i < gameData.numMonths; i++) {
-      cols.push({ field: months[i] });
+    let priceCols = [{ field: "company" }];
+    for (let i = 0; i < gameData.numMonths; i++) {
+      priceCols.push({ field: months[i].toLowerCase() });
     }
-    let rows = [];
+
+    let modCols = [];
+    for (let i = 0; i <= gameData.numMonths; i++) {
+      modCols.push({ field: i.toString() });
+    }
+
+    let priceRows = [];
     for (const company of gameData.companies) {
       let row = { company: company.marketSym };
-      for (i = 0, i < gameData.numMonths; i++; ) {
-        row[this.months[i]] = company.prices[i];
+      for (let i = 0; i < gameData.numMonths; i++) {
+        row[this.months[i].toLowerCase()] = company.prices[i]
+          ? company.prices[i]
+          : null;
       }
-      rows.push(row);
+      priceRows.push(row);
     }
-    return { cols: cols, rows: rows };
+
+    let modRows = [{ 0: "Roll" }];
+    for (let i = 0; i < gameData.numMonths; i++) {
+      modRows[0][i + 1] = gameData.months[i] ? gameData.months[i].roll : null;
+    }
+    const doubleLength = this.companies.length * 2;
+    for (let i = 0; i < doubleLength; i++) {
+      const reLoopPoint = gameData.companies.length;
+      const idx = i >= reLoopPoint ? i - reLoopPoint : i;
+      const company = gameData.companies[idx];
+      console.log(company);
+      const symbol = i >= reLoopPoint ? "β" : "Δ";
+      let row = { 0: `${company.marketSym}${symbol}` };
+      for (let j = 0; j < gameData.numMonths; j++) {
+        const val =
+          i >= reLoopPoint ? company.deltaMods[j] : company.betaMods[j];
+        row[j + 1] = val ? val : null;
+      }
+      modRows.push(row);
+    }
+
+    return {
+      priceCols: priceCols,
+      priceRows: priceRows,
+      modCols: modCols,
+      modRows: modRows,
+    };
+  }
+
+  static getChartData(gameData) {
+    const series = [{ type: "line", xKey: "month", yKey: "price" }];
   }
 
   static quitGame() {

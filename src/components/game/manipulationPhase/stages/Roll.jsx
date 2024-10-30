@@ -9,7 +9,7 @@ const Roll = ({ data, setData }) => {
   return (
     <div>
       Roll
-      <Input></Input>
+      <Input onChange={handleChange}></Input>
     </div>
   );
 };

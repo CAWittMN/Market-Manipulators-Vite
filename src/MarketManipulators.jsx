@@ -3,22 +3,20 @@ import { useNavigate } from "react-router-dom";
 import AppContext from "./context/AppContext";
 import GameApi from "./GameApi";
 import Menu from "./components/common/menuModal/Menu.jsx";
-import NewGameMenu from "./components/menus/NewGameMenu.jsx";
-import LoadGameMenu from "./components/menus/LoadGameMenu.jsx";
 import Router from "./router/Router.jsx";
+import { Divider } from "@nextui-org/react";
 
 const MarketManipulators = () => {
   const [currGame, setCurrGame] = useState(null);
-  const [manipulationData, setManipulationData] = useState(INITIAL);
   const [phaseIdx, setPhaseIdx] = useState(0);
   const [theme, setTheme] = useState("standard");
 
-  const navigate = useNavigate();
+  const nav = useNavigate();
 
   const handleStartNewGame = (options) => {
     const newGame = GameApi.newGame(options);
     setCurrGame(newGame);
-    navigate("/game/market");
+    nav("/game/market/");
   };
 
   const handleGetGames = () => {
@@ -29,11 +27,12 @@ const MarketManipulators = () => {
   const handleLoadGame = (fileName) => {
     const game = GameApi.getGame(fileName);
     setCurrGame(game);
-    navigate("/game");
+    nav("/game");
   };
 
   const handleUnloadGame = () => {
     setCurrGame(null);
+    nav("/");
   };
 
   const handleGetTableData = () => {
@@ -41,16 +40,10 @@ const MarketManipulators = () => {
   };
 
   const handleManipulate = (data) => {
-    const prevMonth = currGame.months[currGame.months.length - 1];
-    const manipulatedMonth = GameApi.manipulate(prevMonth, data);
-    const updatedGame = currGame.months.push(manipulatedMonth);
-    setCurrGame({ ...updatedGame });
-    navigate("/game/newMonth");
-    GameApi.saveGame(updatedGame);
-  };
-
-  const handleGetMarketCard = (cardNum) => {
-    return marketCards[marketCardNum].component();
+    const manipulatedGame = GameApi.manipulate(data, currGame);
+    setCurrGame(manipulatedGame);
+    nav("/game/newMarket");
+    // GameApi.saveGame(updatedGame);
   };
 
   const handleQuit = () => GameApi.quitGame();
@@ -62,10 +55,13 @@ const MarketManipulators = () => {
         handleManipulate,
         handleQuit,
         handleStartNewGame,
+        handleGetTableData,
       }}
     >
-      <Menu />
-      <Router />
+      <div className="container-sm">
+        <Menu />
+        <Router />
+      </div>
     </AppContext.Provider>
   );
 };

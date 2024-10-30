@@ -43,7 +43,7 @@ const NewGameMenu = () => {
                 />
               </ModalBody>
               <ModalFooter>
-                <Button onPress={() => handleStartNewGame(value)}></Button>
+                <Button onPress={() => handleStartNewGame(value)}>Start</Button>
                 <Button onPress={onClose}>Cancel</Button>
               </ModalFooter>
             </>
