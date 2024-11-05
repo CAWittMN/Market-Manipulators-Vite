@@ -1,7 +1,7 @@
 import React from "react";
 
 const Header = () => {
-  return <div>Header</div>;
+  return <h1>Market Manipulators!</h1>;
 };
 
 export default Header;

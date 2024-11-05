@@ -6,17 +6,20 @@ import NewGameMenu from "./NewGameMenu";
 import LoadGameMenu from "./LoadGameMenu";
 import ContinueGameButton from "./ContinueGameButton";
 import Header from "../common/Header";
+import QuitModal from "../common/menuModal/QuitModal";
 
 const MainMenu = () => {
-  const { currGame, handleQuit } = useContext(AppContext);
+  const { currGame } = useContext(AppContext);
 
   return (
-    <div>
-      <Header />
+    <div className="flex flex-col justify-center items-center">
+      <div className="">
+        <Header />
+      </div>
       {currGame && <ContinueGameButton />}
       <NewGameMenu />
       <LoadGameMenu />
-      <button onClick={handleQuit}>Quit</button>
+      <QuitModal />
     </div>
   );
 };

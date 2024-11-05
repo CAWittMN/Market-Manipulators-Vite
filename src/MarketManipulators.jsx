@@ -4,11 +4,9 @@ import AppContext from "./context/AppContext";
 import GameApi from "./GameApi";
 import Menu from "./components/common/menuModal/Menu.jsx";
 import Router from "./router/Router.jsx";
-import { Divider } from "@nextui-org/react";
 
 const MarketManipulators = () => {
   const [currGame, setCurrGame] = useState(null);
-  const [phaseIdx, setPhaseIdx] = useState(0);
   const [theme, setTheme] = useState("standard");
 
   const nav = useNavigate();
@@ -58,8 +56,10 @@ const MarketManipulators = () => {
         handleGetTableData,
       }}
     >
-      <div className="container-sm">
-        <Menu />
+      <div className="container w-[1200px] h-[90vh] mx-auto flex justify-center items-center relative border">
+        <div className="absolute left-3 top-0">
+          <Menu />
+        </div>
         <Router />
       </div>
     </AppContext.Provider>
