@@ -1,21 +1,17 @@
-import React, { useContext } from "react";
-import AppContext from "../../../context/AppContext";
+import React from "react";
 import {
   Modal,
   ModalHeader,
   ModalContent,
   ModalBody,
   ModalFooter,
-  useDisclosure,
   Button,
 } from "@nextui-org/react";
 
-const QuitModal = () => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { handleQuit } = useContext(AppContext);
+const QuitModal = ({ disclosure, quit }) => {
+  const { isOpen, onOpen, onOpenChange, onClose } = disclosure;
   return (
     <>
-      <Button onPress={onOpen}>Quit</Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -24,7 +20,7 @@ const QuitModal = () => {
                 Are you sure you want to quit?
               </ModalHeader>
               <ModalFooter>
-                <Button onPress={handleQuit}>Yes</Button>
+                <Button onPress={quit}>Yes</Button>
                 <Button onPress={onClose}>No</Button>
               </ModalFooter>
             </>

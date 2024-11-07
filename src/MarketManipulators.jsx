@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDisclosure } from "@nextui-org/react";
 import AppContext from "./context/AppContext";
 import GameApi from "./GameApi";
 import Menu from "./components/common/menuModal/Menu.jsx";
 import Router from "./router/Router.jsx";
+import { rule } from "postcss";
 
 const MarketManipulators = () => {
   const [currGame, setCurrGame] = useState(null);
   const [theme, setTheme] = useState("standard");
 
   const nav = useNavigate();
+
+  const quitModalDisclosure = useDisclosure();
+  const loadGameModalDisclosure = useDisclosure();
+  const nextMonthModalDiscolsure = useDisclosure();
+  const rulesModalDisclosure = useDisclosure();
+  const creditsModalDisclosure = useDisclosure();
 
   const handleStartNewGame = (options) => {
     const newGame = GameApi.newGame(options);
@@ -25,7 +33,7 @@ const MarketManipulators = () => {
   const handleLoadGame = (fileName) => {
     const game = GameApi.getGame(fileName);
     setCurrGame(game);
-    nav("/game");
+    nav("/game/newMarket");
   };
 
   const handleUnloadGame = () => {
@@ -35,6 +43,10 @@ const MarketManipulators = () => {
 
   const handleGetTableData = () => {
     return GameApi.makeTableData(currGame);
+  };
+
+  const handleGetChartData = () => {
+    return GameApi.makeChartData(currGame);
   };
 
   const handleManipulate = (data) => {
@@ -54,6 +66,11 @@ const MarketManipulators = () => {
         handleQuit,
         handleStartNewGame,
         handleGetTableData,
+        handleGetChartData,
+        quitModalDisclosure,
+        loadGameModalDisclosure,
+        rulesModalDisclosure,
+        creditsModalDisclosure,
       }}
     >
       <div className="container w-[1200px] h-[90vh] mx-auto flex justify-center items-center relative border">

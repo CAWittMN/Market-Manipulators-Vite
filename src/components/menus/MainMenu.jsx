@@ -1,6 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 
-import AppContext from "../../context/AppContext";
+import { useGameContext } from "../../hooks/hooks";
+
+import { Button } from "@nextui-org/react";
 
 import NewGameMenu from "./NewGameMenu";
 import LoadGameMenu from "./LoadGameMenu";
@@ -9,7 +11,7 @@ import Header from "../common/Header";
 import QuitModal from "../common/menuModal/QuitModal";
 
 const MainMenu = () => {
-  const { currGame } = useContext(AppContext);
+  const { currGame, handleQuit, quitModalDisclosure } = useGameContext();
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -19,7 +21,8 @@ const MainMenu = () => {
       {currGame && <ContinueGameButton />}
       <NewGameMenu />
       <LoadGameMenu />
-      <QuitModal />
+      <Button onPress={() => quitModalDisclosure.onOpen()}>Quit</Button>
+      <QuitModal disclosure={quitModalDisclosure} quit={handleQuit} />
     </div>
   );
 };

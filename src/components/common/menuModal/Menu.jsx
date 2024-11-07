@@ -1,4 +1,5 @@
 import React from "react";
+import { useGameContext } from "../../../hooks/hooks";
 import {
   Avatar,
   DropdownTrigger,
@@ -14,6 +15,13 @@ import RulesModal from "./RulesModal";
 import BackToMainModal from "./BackToMainModal";
 
 const Menu = () => {
+  const { handleQuit, quitModalDisclosure, loadGameModalDisclosure } =
+    useGameContext();
+  const handleMenuAction = (key) => {
+    if (key === "quit") quitModalDisclosure.onOpen();
+    if (key === "back-to-main") backModalDisclosure.onOpen();
+    if (key === "load-game") loadGameModalDisclosure.onOpen();
+  };
   return (
     <>
       <Dropdown>
@@ -30,10 +38,10 @@ const Menu = () => {
             }}
           />
         </DropdownTrigger>
-        <DropdownMenu>
+        <DropdownMenu onAction={handleMenuAction}>
           <DropdownSection showDivider>
             <DropdownItem textValue="kjhkh" key="back-to-main">
-              <BackToMainModal />
+              <p className="text-white">Back to the main menu</p>
             </DropdownItem>
             <DropdownItem key="load-game">
               <LoadGameModal />
@@ -48,12 +56,11 @@ const Menu = () => {
             </DropdownItem>
           </DropdownSection>
           <DropdownSection>
-            <DropdownItem key="quit">
-              <QuitModal />
-            </DropdownItem>
+            <DropdownItem key="quit">Quit</DropdownItem>
           </DropdownSection>
         </DropdownMenu>
       </Dropdown>
+      <QuitModal disclosure={quitModalDisclosure} quit={handleQuit} />
     </>
   );
 };
